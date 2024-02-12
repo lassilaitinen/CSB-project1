@@ -4,3 +4,13 @@
 <head>
     <title>The Secure App</title>
 </head>
+
+{% if notice_list %}
+    <ul>
+    {% for notice in notice_list %}
+        <li><a href="/secureapp/{{ notice.id }}/">{{ notice.notice_text }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No notices are available.</p>
+{% endif %}
