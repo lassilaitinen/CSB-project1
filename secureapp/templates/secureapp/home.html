@@ -4,3 +4,22 @@
 <head>
     <title>The Secure App</title>
 </head>
+
+<h1>The secure app</h1>
+<p>List of all cyber security notices: </p>
+{% if notice_list %}
+    <ul>
+    {% for notice in notice_list %}
+    {% csrf_token %}
+        <li><a href="{% url 'secureapp:detail' notice.id %}">{{ notice.notice_title }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No notices are available.</p>
+{% endif %}
+
+<p>Logged in as: {{user}}</p>
+<form action='logout/' method="POST">
+    {% csrf_token %}
+    <input type="submit" value="Logout"/>
+</form>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<head>
+    <title>The Secure App: Notice</title>
+</head>
+
+<h1>{{ notice.notice_title }}</h1>
+<p>Description:{{ notice.description }}</p>
+
+<h3>Vote, was this a good notice?</h3>
+<form action="{% url 'secureapp:vote' notice.id %}" method="post">
+    {% csrf_token %}
+    {% for choice in notice.choice_set.all %}
+        <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
+        <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
+    {% endfor %}
+    <input type="submit" value="Vote">
+</form>
+
+{% block content %}
+<h2>Comments about the topic:</h2>    
+{% for comment in comments %}
+    {%if comment.notice.id == notice.id %}
+    <p>{{ comment.user.username }}: {{comment.commenttext }}</p>
+    {%endif%}
+{% endfor %}
+
+<p>Logged in as a {{user}}</p>
+
+<h3>Comment:</h3>
+<form method="post" action="{% url 'secureapp:detail' notice.id %}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Add comment</button>
+</form>
+{% endblock %}
