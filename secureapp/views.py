@@ -9,7 +9,7 @@ from django.template import loader
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
-from .forms import CommentForm
+from .forms import CommentForm, NoticeForm
 
 
 def loginView(request):
@@ -17,17 +17,38 @@ def loginView(request):
         return render(request, 'secureapp/login.html')
     else:
         return render(request, 'secureapp/login.html')
-    #return HttpResponse("the secure app login page")
 
 
 #@login_required
 class homeView(generic.ListView):
-#def homeView(request):
     template_name = 'secureapp/home.html'
     context_object_name = 'notice_list'
 
     def get_queryset(self):
         return Notice.objects.order_by('-pub_date')
+    
+    def post(self, request, *args, **kwargs):
+        form = NoticeForm(request.POST)
+
+        if request.user.is_authenticated:
+            print(form)
+            if form.is_valid():
+                newn = form.save(commit=False)
+                newn.save() # new notice added
+                choice1 = Choice(notice = newn, choice_text = 'Good notice', votes=0)
+                choice1.save()
+                choice2 = Choice(notice = newn, choice_text = 'Irrelevant notice', votes=0)
+                choice2.save() # added the voting choices
+            return self.get(request, *args, **kwargs)
+        else:
+            messages.error(request, 'Log in to add notice!')
+            return redirect('secureapp:login')
+        
+    def get(self, request, *args, **kwargs):
+        notices = Notice.objects.order_by('-pub_date')
+        form = NoticeForm()
+        return render(request, self.template_name, {'notice_list': notices, 'form': form})
+
 
 #@login_required
 class DetailView(generic.DetailView):
@@ -57,28 +78,13 @@ class DetailView(generic.DetailView):
         else:
             messages.error(request, 'Log in to comment!')
             return redirect('secureapp:login')
-        #return redirect('secureapp:detail', pk = notice.pk)
-    
+  
+ 
 #@login_required
 class ResultsView(generic.DetailView):
     model = Notice
     template_name = 'secureapp/results.html'
 
-#@login_required
-def add_comment(request):
-    if request.method == 'POST':
-        commenttext = request.POST('commenttext')
-        #if request.user.is_authenticated:
-        new_comment = Comment.objects.create(user=request.user, comment_text=commenttext)
-            #messages.success(request, 'Comment sent.')
-        return render(request, 'secureapp/details.html', {'comment': new_comment})
-        #else:
-        #    messages.error(request, 'Log in to comment!')
-        #    return redirect('secureapp:login')
-
-    else:
-        return render(request, 'secureapp/add_comment.html')
-    
     
 def vote(request, notice_id):
     nn = get_object_or_404(Notice, pk = notice_id)
@@ -95,3 +101,4 @@ def vote(request, notice_id):
         selected_choice.save()
 
         return HttpResponseRedirect(reverse('secureapp:results', args=(notice_id,)))
+    

@@ -6,7 +6,7 @@
 </head>
 
 <h1>The secure app</h1>
-<p>List of all cyber security notices: </p>
+<p>List of all cyber security notices in this app: </p>
 {% if notice_list %}
     <ul>
     {% for notice in notice_list %}
@@ -17,6 +17,14 @@
 {% else %}
     <p>No notices are available.</p>
 {% endif %}
+
+{% block content %}
+<form method="post" action="{% url 'secureapp:home' %}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Add notice</button>
+</form>
+{% endblock %}
 
 <p>Logged in as: {{user}}</p>
 <form action='logout/' method="POST">

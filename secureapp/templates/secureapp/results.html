@@ -7,6 +7,8 @@
     {% endfor %}
     </ul>
 
-    <a href="{% url 'secureapp:detail' notice.id %}">Vote again?</a>
-  </body>
-</html>
+    
+</body>
+<a href="{% url 'secureapp:detail' notice.id %}">To the notice page</a>
+
+<a href="{% url 'secureapp:home'%}">To the home page</a>

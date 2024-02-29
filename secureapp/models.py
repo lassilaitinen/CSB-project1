@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 class Notice(models.Model):
     notice_title = models.CharField(max_length=200)
     description = models.CharField(max_length=2000)
-    pub_date = models.DateTimeField('date published')
+    pub_date = models.DateTimeField('date published (YYYY-MM-DD)')
     
     def __str__(self):
         return self.notice_title
@@ -23,7 +23,7 @@ class Choice(models.Model):
     
 class Comment(models.Model):
     notice = models.ForeignKey(Notice, on_delete=models.CASCADE)
-    commenttext = models.CharField(max_length=2000)
+    commenttext = models.CharField('Comment',max_length=2000)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     
     def __str__(self):
