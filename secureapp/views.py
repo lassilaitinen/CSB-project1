@@ -57,10 +57,20 @@ class DetailView(generic.DetailView):
  
     def get(self, request, *args, **kwargs):
         n = self.get_object()
+        
+        #FLAW: (SQL-)injection 
+        #   We can use Djangos built in option to filter data to avoid injection.
+        #   Data should be filtered (or validated) before reaching the database to avoid attacker
+        #   having access directly to the database.
+        #   To fix the flaw, uncomment the line 67 and comment lines 69-72.
+        
+        #comments = Comment.objects.filter(notice=n)
+        
         comments = Comment.objects.all()
         sqlq = request.GET.get('search')
         if sqlq:
             comments = Comment.objects.raw("SELECT * FROM Comment WHERE title LIKE '%{}%'".format(sqlq))
+        
         form = CommentForm()
         return render(request, self.template_name, {'notice': n, 'comments': comments, 'form': form})
     
