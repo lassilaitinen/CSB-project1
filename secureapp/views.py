@@ -8,7 +8,7 @@ from .models import Notice, Comment, Choice
 from django.template import loader
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt
 from .forms import CommentForm, NoticeForm
 
 
@@ -27,6 +27,13 @@ class homeView(generic.ListView):
     def get_queryset(self):
         return Notice.objects.order_by('-pub_date')
     
+    #FLAW: CSRF
+    #   Without CSRF-protection, it is possible to access data 
+    #   as an authenticated user that should not be accessible.
+    #   
+    #   To fix the flaw, comment lines with @csrf_exempt (lines 36, 84 and 106)
+    
+    @csrf_exempt
     def post(self, request, *args, **kwargs):
         form = NoticeForm(request.POST)
 
@@ -74,6 +81,7 @@ class DetailView(generic.DetailView):
         form = CommentForm()
         return render(request, self.template_name, {'notice': n, 'comments': comments, 'form': form})
     
+    @csrf_exempt
     def post(self, request, *args, **kwargs):
         notice = self.get_object()
         form = CommentForm(request.POST)
@@ -95,7 +103,7 @@ class ResultsView(generic.DetailView):
     model = Notice
     template_name = 'secureapp/results.html'
 
-    
+@csrf_exempt
 def vote(request, notice_id):
     nn = get_object_or_404(Notice, pk = notice_id)
     try:
