@@ -69,7 +69,7 @@ class DetailView(generic.DetailView):
         #   We can use Djangos built in option to filter data to avoid injection.
         #   Data should be filtered (or validated) before reaching the database to avoid attacker
         #   having access directly to the database.
-        #   To fix the flaw, uncomment the line 67 and comment lines 69-72.
+        #   To fix the flaw, uncomment the line 74 and comment lines 76-79.
         
         #comments = Comment.objects.filter(notice=n)
         

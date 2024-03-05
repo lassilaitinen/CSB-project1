@@ -23,7 +23,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-eyhf5_igswnq5xn&5evz*n$_#ak$eqx5bcpm&&zbhe+5)(i6ia'
 
 # SECURITY WARNING: don't run with debug turned on in production!
+
+#FLAW: Security Misconfiguration
+#   If DEBUG = False, it is harder for the attacker to learn
+#   functions of the application. As DEBUG is now true, the application
+#   is at higher risk.
+#
+#   To fix the flaw, set DEBUG to false (uncomment line 35 and comment/remove line 34)
+
 DEBUG = True
+#DEBUG = False
 
 ALLOWED_HOSTS = []
 
