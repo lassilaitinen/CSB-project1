@@ -94,8 +94,16 @@ DATABASES = {
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
+#FLAW: Identification and Authentication Failures 
+#   With no password validators, users are allowed to use weak passwords.
+#   Weak passwords are easier for attackers to break with brute force attacks.
+#   When validators are used, users must use better passwords which are
+#   harder to break.
+#
+#   To fix the flaw, uncomment the lines 106-117.
+
 AUTH_PASSWORD_VALIDATORS = [
-    {
+    '''{
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
     {
@@ -106,7 +114,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    },'''
 ]
 
 
