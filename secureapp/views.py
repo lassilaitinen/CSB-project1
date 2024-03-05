@@ -17,9 +17,16 @@ def loginView(request):
         return render(request, 'secureapp/login.html')
     else:
         return render(request, 'secureapp/login.html')
+    
+#FLAW: Insecure design
+#   As the app stands now, if the attacker knows the URL the attacker can see everything in the app
+#   without loggin in. If the app includes sensitive information, all the info might be leaked.
+#   
+#
+#   To fix the flaw, uncomment the lines 61, 65, 66, 75, 93 and 94. After uncommenting these lines
+#   if user is not logged in (and not authenticated) the app redirects to the login page.
 
 
-#@login_required
 class homeView(generic.ListView):
     template_name = 'secureapp/home.html'
     context_object_name = 'notice_list'
@@ -31,7 +38,7 @@ class homeView(generic.ListView):
     #   Without CSRF-protection, it is possible to access data 
     #   as an authenticated user that should not be accessible.
     #   
-    #   To fix the flaw, comment lines with @csrf_exempt (lines 36, 84 and 106)
+    #   To fix the flaw, comment lines with @csrf_exempt (lines 43, 97 and 118)
     
     @csrf_exempt
     def post(self, request, *args, **kwargs):
@@ -49,37 +56,43 @@ class homeView(generic.ListView):
             return self.get(request, *args, **kwargs)
         else:
             messages.error(request, 'Log in to add notice!')
-            return redirect('secureapp:login')
+            return redirect('../secureapp')
         
     def get(self, request, *args, **kwargs):
-        notices = Notice.objects.order_by('-pub_date')
-        form = NoticeForm()
-        return render(request, self.template_name, {'notice_list': notices, 'form': form})
+        #if request.user.is_authenticated:      #Uncomment to fix the insecure design -flaw
+            notices = Notice.objects.order_by('-pub_date')
+            form = NoticeForm()
+            return render(request, self.template_name, {'notice_list': notices, 'form': form})
+        #else:                                  #Uncomment to fix the insecure design -flaw
+        #    return redirect('../secureapp')    #Uncomment to fix the insecure design -flaw
 
 
-#@login_required
+
 class DetailView(generic.DetailView):
     model = Notice
     template_name = 'secureapp/details.html'
  
     def get(self, request, *args, **kwargs):
-        n = self.get_object()
+        #if request.user.is_authenticated: #Uncomment to fix the insecure design -flaw
+            n = self.get_object()
         
-        #FLAW: (SQL-)injection 
-        #   We can use Djangos built in option to filter data to avoid injection.
-        #   Data should be filtered (or validated) before reaching the database to avoid attacker
-        #   having access directly to the database.
-        #   To fix the flaw, uncomment the line 74 and comment lines 76-79.
+            #FLAW: (SQL-)injection 
+            #   We can use Djangos built in option to filter data to avoid injection.
+            #   Data should be filtered (or validated) before reaching the database to avoid attacker
+            #   having access directly to the database.
+            #   To fix the flaw, uncomment the line 85 and comment lines 87-90.
+            
+            #comments = Comment.objects.filter(notice=n)
         
-        #comments = Comment.objects.filter(notice=n)
-        
-        comments = Comment.objects.all()
-        sqlq = request.GET.get('search')
-        if sqlq:
-            comments = Comment.objects.raw("SELECT * FROM Comment WHERE title LIKE '%{}%'".format(sqlq))
-        
-        form = CommentForm()
-        return render(request, self.template_name, {'notice': n, 'comments': comments, 'form': form})
+            comments = Comment.objects.all()
+            sqlq = request.GET.get('search')
+            if sqlq:
+                comments = Comment.objects.raw("SELECT * FROM Comment WHERE title LIKE '%{}%'".format(sqlq))
+            
+            form = CommentForm()
+            return render(request, self.template_name, {'notice': n, 'comments': comments, 'form': form})
+        #else:                          #Uncomment to fix the insecure design -flaw
+        #    return redirect('../')     #Uncomment to fix the insecure design -flaw
     
     @csrf_exempt
     def post(self, request, *args, **kwargs):
@@ -95,10 +108,9 @@ class DetailView(generic.DetailView):
             return self.get(request, *args, **kwargs)
         else:
             messages.error(request, 'Log in to comment!')
-            return redirect('secureapp:login')
-  
+            return redirect('../')
  
-#@login_required
+
 class ResultsView(generic.DetailView):
     model = Notice
     template_name = 'secureapp/results.html'
