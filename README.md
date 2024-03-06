@@ -26,5 +26,7 @@ To use this app, you need to have Django and Python installed. Note that these i
 5.	Now the application should be available at your localhost server: http://127.0.0.1:8000/secureapp (note that there is nothing without writing the ‘secureapp’ to the URL).
 
 This application has multiple accounts to use, here is one regular user to use when logging in:
+
 Username: LuckyLuke
+
 Password: wildwest

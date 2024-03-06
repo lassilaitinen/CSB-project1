@@ -13,7 +13,7 @@
 
 <h3>Vote, was this a good notice?</h3>
 <form action="{% url 'secureapp:vote' notice.id %}" method="post">
-    {% csrf_token %}
+    {% csrf_token %} <!--Already added to fix the CSRF flaw to keep app working-->
     {% for choice in notice.choice_set.all %}
         <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
         <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
@@ -31,7 +31,7 @@
 
 <h3>Add comment:</h3>
 <form method="post" action="{% url 'secureapp:detail' notice.id %}">
-    {% csrf_token %}
+    {% csrf_token %} <!--Already added to fix the CSRF flaw to keep app working-->
     {{ form.as_p }}
     <button type="submit">Add comment</button>
 </form>

@@ -10,7 +10,7 @@
 {% if notice_list %}
     <ul>
     {% for notice in notice_list %}
-    {% csrf_token %}
+    {% csrf_token %} <!--Already added to fix the CSRF flaw to keep app working-->
         <li><a href="{% url 'secureapp:detail' notice.id %}">{{ notice.notice_title }}</a></li>
     {% endfor %}
     </ul>
@@ -20,7 +20,7 @@
 
 {% block content %}
 <form method="post" action="{% url 'secureapp:home' %}">
-    {% csrf_token %}
+    {% csrf_token %} <!--Already added to fix the CSRF flaw to keep app working-->
     {{ form.as_p }}
     <button type="submit">Add notice</button>
 </form>

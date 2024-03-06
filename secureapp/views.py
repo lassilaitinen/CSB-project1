@@ -35,10 +35,10 @@ class homeView(generic.ListView):
         return Notice.objects.order_by('-pub_date')
     
     #FLAW: CSRF
-    #   Without CSRF-protection, it is possible to access data 
-    #   as an authenticated user that should not be accessible.
+    #   Without CSRF-protection, it is possible to access data as an authenticated
+    #   user that should not be accessible. CSRF-tokens are already added to .html -files.
     #   
-    #   To fix the flaw, comment lines with @csrf_exempt (lines 43, 97 and 118)
+    #   To fix the flaw, comment lines with @csrf_exempt (lines 43, 97 and 118) and check that forms in .html -files have CSRF-tokens.
     
     @csrf_exempt
     def post(self, request, *args, **kwargs):
